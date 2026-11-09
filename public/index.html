@@ -42,23 +42,35 @@ svg.i{width:20px;height:20px;flex:none;stroke:currentColor;fill:none;stroke-widt
 .savest.bad{color:var(--err)}.savest.bad .dot{background:var(--err)}
 @keyframes pulse{50%{opacity:.3}}
 
-/* stepper: všechny kroky vidět */
+/* stepper (jako Top Speaker): prošlé kroky mají fajfku v kroužku */
 .stepper{position:sticky;top:0;z-index:20;margin:0 -24px 22px;padding:10px 24px 0;background:linear-gradient(#0a0a09 75%,rgba(10,10,9,0))}
-.stp-in{display:flex;gap:6px;padding-bottom:10px}
-.stp{flex:1 1 0;min-width:0;display:flex;align-items:center;justify-content:center;gap:8px;padding:9px 8px;border-radius:12px;border:1px solid var(--line2);background:var(--card2);color:var(--muted);font-size:13.5px;font-weight:700;transition:.2s;white-space:nowrap}
-.stp span.l{overflow:hidden;text-overflow:ellipsis}
-.stp:hover{border-color:var(--line);color:var(--ink)}
-.stp .si{position:relative;display:grid;place-items:center}
-.stp .si svg.i{width:18px;height:18px}
-.stp .ck{position:absolute;right:-7px;top:-6px;width:14px;height:14px;border-radius:50%;background:var(--ok);display:grid;place-items:center}
-.stp .ck[hidden]{display:none}
-.stp .ck svg.i{width:9px;height:9px;stroke-width:3.4;color:#0b1a0e}
+.stp-in{display:flex;gap:4px;padding-bottom:10px}
+.stp{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:6px;padding:9px 4px 8px;border-radius:12px;border:1px solid transparent;color:var(--muted);font-size:13px;font-weight:700;transition:.2s}
+.stp .l{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.stp .sc{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--card2);border:1px solid var(--line2);color:var(--muted);transition:.2s}
+.stp .sc svg.i{width:15px;height:15px}
+.stp:hover{color:var(--ink);background:rgba(255,255,255,.03)}
 .stp.done{color:#d9d3c7}
-.stp.active{flex:1.6 1 0;border-color:var(--gold);color:#16130c;background:linear-gradient(135deg,var(--gold2),var(--gold));box-shadow:0 6px 22px -10px rgba(201,165,92,.7)}
+.stp.done .sc{background:rgba(201,165,92,.16);border-color:var(--line);color:var(--gold2)}
+.stp.done .sc svg.i{stroke-width:2.6;width:14px;height:14px}
+.stp.active{border-color:var(--line);background:rgba(201,165,92,.08);color:var(--ink)}
+.stp.active .sc{background:linear-gradient(135deg,var(--gold2),var(--gold));border-color:var(--gold);color:#16130c;box-shadow:0 4px 16px -6px rgba(201,165,92,.8)}
 .stp-bar{height:2px;background:var(--line2);border-radius:2px;overflow:hidden}
 .stp-bar b{display:block;height:100%;background:linear-gradient(90deg,var(--gold-d),var(--gold2));transition:width .4s ease}
-@media (max-width:1020px){.stp:not(.active) span.l{display:none}.stp{flex:0 0 46px}.stp.active{flex:1 1 auto}}
-@media (max-width:420px){.stp-in{gap:4px}.stp,.stp.active{flex:1 1 0;padding:9px 0}.stp.active span.l{display:none}.stp .si svg.i{width:16px;height:16px}}
+@media (max-width:720px){.stp .l{display:none}.stp{padding:8px 2px}}
+
+/* fáze (Co dál) */
+.tiles.ph{grid-template-columns:repeat(auto-fill,minmax(190px,1fr))}
+@media (max-width:520px){.tiles.ph{grid-template-columns:1fr 1fr}}
+.ph .tl{cursor:default;min-height:0}
+.ph .tl:hover{transform:none}
+.ph .tl small{margin-top:-4px;flex:1}
+.ph .seg{display:flex;gap:4px;width:100%;background:rgba(0,0,0,.35);border:1px solid var(--line2);border-radius:999px;padding:3px;margin-top:4px}
+.ph .seg button{flex:1;padding:6px 4px;border-radius:999px;font-size:12.5px;font-weight:800;color:var(--muted);transition:.15s}
+.ph .seg button:hover{color:var(--ink)}
+.ph .seg button.on{background:var(--gold);color:#16130c}
+.ph .segfix{flex:1;text-align:center;padding:6px 4px;font-size:12.5px;font-weight:800;color:var(--gold2)}
+.chip.nv{margin-top:12px;padding:7px 12px 7px 10px;font-size:13px}
 
 /* layout s pravým panelem */
 .lay{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:24px;align-items:start}
@@ -354,10 +366,10 @@ function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('show')
    chips, files, logo, access (doména + rozbalovací údaje) */
 const STEPS=[
  {id:'uvod',t:'Úvod',i:'spark'},
- {id:'firma',t:'Firma',i:'building',known:[['building','JANTREX realizace s.r.o.'],['mail','info@jantrex.cz'],['globe','jantrex.cz']],q:[
+ {id:'firma',t:'Firma',i:'building',q:[
    {k:'firma',type:'fields',label:'Údaje na web',i:'building',f:[
-     ['ico','IČO','hash','numeric'],['tel','Telefon na web','phone','tel'],
-     ['sidlo','Sídlo firmy','pin','',1],['osoba','Jméno na webu','user'],['oblast','Kde zakázky děláš','pin']]}
+     ['nazev','Název firmy','building','',1],['ico','IČO','hash','numeric'],['tel','Telefon na web','phone','tel'],['email','E-mail na web','mail','email'],['osoba','Jméno na webu','user'],
+     ['sidlo','Sídlo firmy','pin','',1],['oblast','Kde zakázky děláš','pin','',1]]}
  ]},
  {id:'sluzby',t:'Služby',i:'flame',q:[
    {k:'sluzby',type:'multi',label:'Co děláš',i:'wrench',opts:[['tc','Tepelná čerpadla','fan'],['kotle','Plynové kotle','flame'],['podlahovka','Podlahové topení','floor'],['voda','Voda a odpady','drop'],['novostavby','Novostavby na klíč','home'],['rekonstrukce','Rekonstrukce','hammer'],['bazeny','Bazény','pool'],['servis','Servis a opravy','wrench']],other:'sluzbyJine',otherPh:'Něco dalšího?'}
@@ -374,13 +386,15 @@ const STEPS=[
  {id:'fotky',t:'Fotky',i:'camera',q:[
    {k:'fotky',type:'files',krok:'fotky',label:'Fotky z realizací',i:'images',hint:'Stačí 6–12 nejlepších, klidně i tvoje parta',accept:'image/*,video/*',compress:1}
  ]},
- {id:'online',t:'Online',i:'globe',known:[['globe','jantrex.cz u Active24'],['mail','info@jantrex.cz']],q:[
+ {id:'online',t:'Online',i:'globe',q:[
+   {k:'dom',type:'fields',label:'Doména',i:'globe',f:[['domena','Doména','globe'],['registrator','Kde je koupená','server']]},
    {k:'pristup',type:'access',label:'Přístup k doméně',i:'key'},
    {k:'mail',type:'one',label:'Kde ti běží e-mail',i:'mail',cols:3,opts:[['active24','Active24','server'],['google','Gmail','mail'],['jinde','Jinde','globe']],nevim:1},
-   {k:'site',type:'fields',label:'Kde tě lidi najdou',i:'search',opt:1,f:[['fb','Facebook','link','url'],['ig','Instagram','link','url'],['gmaps','Google Mapy','pin','url',1]]}
+   {k:'gbp',type:'one',label:'Google profil firmy (Mapy)',i:'pin',cols:3,opts:[['zalozit','Nemám, založ ho','plus'],['vylepsit','Mám, pomoz s ním','spark'],['nechat','Mám, je to OK','check']]},
+   {k:'site',type:'fields',label:'Odkazy, pokud máš',i:'link',opt:1,f:[['fb','Facebook','link','url'],['ig','Instagram','link','url'],['gmaps','Google Mapy','pin','url',1]]}
  ]},
  {id:'dal',t:'Co dál',i:'layers',q:[
-   {k:'chce',type:'multi',label:'Co chceš mít',i:'layers',sub:'Web je základ. Zbytek klidně postupně.',opts:[['web','Web','globe',1],['form','Chytrý formulář','layers'],['admin','Administrace','dash'],['realizace','Fotky k zakázkám','images'],['maily','Zprávy zákazníkům','mail'],['identita','Google a Facebook','palette'],['tisk','Vizitky a letáky','printer'],['faktury','Faktury přes AI','receipt']]},
+   {k:'chce',type:'phase',label:'Co chceš teď a co později',i:'layers',opts:[['web','Web','globe','Firma, služby, kontakt',1],['form','Chytrý formulář','layers','Zákazník naklikne zakázku a nahraje projekt'],['admin','Administrace','dash','Poptávky a zakázky na jednom místě'],['realizace','Fotky k zakázkám','images','Sám si nahraješ fotky z hotové realizace'],['maily','Zprávy zákazníkům','mail','Automatický e-mail, že poptávka dorazila'],['identita','Google a Facebook','palette','Stejné logo a vzhled všude'],['tisk','Vizitky a letáky','printer','Tisk ve stejném stylu'],['faktury','Faktury přes AI','receipt','Napíšeš co a za kolik, faktura odejde']]},
    {k:'termin',type:'one',label:'Kdy chceš web venku',i:'cal',cols:3,opts:[['hned','Co nejdřív','rocket'],['mesic','Do měsíce','cal'],['nespecha','Nespěchá','coffee']]}
  ]},
  {id:'odeslat',t:'Odeslat',i:'send'}
@@ -389,8 +403,8 @@ const FORM_STEPS=STEPS.filter(s=>s.q);
 const SI=Object.fromEntries(STEPS.map((s,i)=>[s.id,i]));
 
 /* ================= stav ================= */
-const LKEY='jantrex-podklady-v2';
-const D0=()=>({a:{chce:['web']},notes:{},files:[],sentAt:null,updatedAt:null});
+const LKEY='jantrex-podklady-v3';
+const D0=()=>({a:{nazev:'JANTREX realizace s.r.o.',email:'info@jantrex.cz',domena:'jantrex.cz',registrator:'Active24',chce:{web:'ted'}},notes:{},files:[],seen:[0],sentAt:null,updatedAt:null});
 let S=D0(),step=0;
 try{const r=localStorage.getItem(LKEY);if(r){const d=JSON.parse(r);S=Object.assign(D0(),d.S||{});S.a=Object.assign(D0().a,S.a);step=d.step||0}}catch(e){}
 let A=S.a;
@@ -410,14 +424,14 @@ async function syncRemote(){try{const r=await fetch('/api/podklady',{cache:'no-s
 function filled(q){
   if(q.type==='fields')return q.f.filter(f=>!f[4]||true).some(f=>(A[f[0]]||'').trim());
   if(q.type==='files')return S.files.some(f=>f.krok===q.krok&&f.id);
-  if(q.type==='multi'||q.type==='chips'){const v=A[q.k]||[];return q.k==='chce'?v.length>1:(v.length>0||!!(q.other&&A[q.other]))}
+  if(q.type==='phase')return Object.keys(A[q.k]||{}).length>1;
+  if(q.type==='multi'||q.type==='chips'){const v=A[q.k]||[];return v.length>0||!!(q.other&&A[q.other])}
   if(q.type==='access')return !!A.pristup;
   return !!A[q.k];
 }
 function stepDone(id){const s=STEPS[SI[id]];if(!s||!s.q)return false;return s.q.filter(q=>!q.opt).every(filled)}
 function refreshMarks(){
   document.querySelectorAll('[data-q]').forEach(el=>{const q=findQ(el.dataset.q);if(q)el.classList.toggle('filled',!!filled(q))});
-  document.querySelectorAll('.stp').forEach(b=>{const i=+b.dataset.go;const x=STEPS[i];const d=i!==step&&(stepDone(x.id)||(x.id==='odeslat'&&S.sentAt));b.classList.toggle('done',!!d);const ck=b.querySelector('.ck');if(ck)ck.hidden=!d});
 }
 function findQ(k){for(const s of FORM_STEPS)for(const q of s.q)if(q.k===k)return q}
 
@@ -433,8 +447,10 @@ function qHTML(q){
   if(q.type==='fields')return `<div class="${cls}" data-q="${q.k}">${qhead(q)}<div class="fields">${q.f.map(([k,ph,icon,mode,full])=>inp(k,ph,icon,mode,full)).join('')}</div></div>`;
   if(q.type==='multi'){const v=A[q.k]||[];return `<div class="${cls}" data-q="${q.k}">${qhead(q)}${q.sub?`<p class="cap" style="margin:-6px 0 12px">${q.sub}</p>`:''}<div class="tiles">${q.opts.map(o=>tileBtn(q,o,v.includes(o[0]),1)).join('')}</div>
     ${q.other?`<div class="other">${inp(q.other,q.otherPh,'plus')}</div>`:''}</div>`}
+  if(q.type==='phase'){const v=A[q.k]||{};return `<div class="${cls}" data-q="${q.k}">${qhead(q)}<div class="tiles ph">${q.opts.map(([id,t,icon,d,locked])=>`<div class="tl ${v[id]?'on':''}" data-ph="${id}"><span class="ti">${ic(icon)}</span><b>${t}</b><small>${d}</small>
+    <div class="seg">${locked?'<span class="segfix">Teď, základ</span>':[['ted','Teď'],['pozdeji','Později']].map(([val,l])=>`<button class="${v[id]===val?'on':''}" data-phase="${q.k}" data-id="${id}" data-v="${val}" aria-pressed="${v[id]===val}">${l}</button>`).join('')}</div></div>`).join('')}</div></div>`}
   if(q.type==='one')return `<div class="${cls}" data-q="${q.k}">${qhead(q)}<div class="tiles ${q.cols===3?'c3':''}">${q.opts.map(o=>tileBtn(q,o,A[q.k]===o[0],0)).join('')}</div>
-    ${q.nevim?`<button class="linkx ${A[q.k]==='nevim'?'on':''}" data-one="${q.k}" data-v="nevim">${ic('help')}Nevím</button>`:''}</div>`;
+    ${q.nevim?`<button class="chip nv ${A[q.k]==='nevim'?'on':''}" data-one="${q.k}" data-v="nevim" aria-pressed="${A[q.k]==='nevim'}">${ic('help')}Nevím</button>`:''}</div>`;
   if(q.type==='chips'){const v=A[q.k]||[];return `<div class="${cls}" data-q="${q.k}">${qhead(q)}<div class="chips">${q.opts.map(([val,t,icon])=>`<button class="chip ${v.includes(val)?'on':''}" data-multi="${q.k}" data-v="${val}" aria-pressed="${v.includes(val)}">${ic(v.includes(val)?'check':icon)}${t}</button>`).join('')}</div></div>`}
   if(q.type==='files')return `<div class="${cls}" data-q="${q.k}">${qhead(q)}${dropHTML(q)}</div>`;
   if(q.type==='logo'){const v=A.logo;return `<div class="${cls}" data-q="logo">${qhead(q)}<div class="logo-row"><img src="/logo-jantrex.jpg" alt="Logo JANTREX">
@@ -461,7 +477,7 @@ function intro(){
    <div class="ways"><div class="way"><span class="ti">${ic('clock')}</span><div><b>10 minut</b><span>Hlavně klikání</span></div></div>
     <div class="way"><span class="ti">${ic('mic')}</span><div><b>Radši namluvit?</b><span>Hlasovka je u každého kroku</span></div></div>
     <div class="way"><span class="ti">${ic('refresh')}</span><div><b>Ukládá se samo</b><span>Dokončíš kdykoliv</span></div></div></div>
-   <div class="map">${FORM_STEPS.map(s=>`<button class="mp ${stepDone(s.id)?'ok':''}" data-go="${SI[s.id]}">${ic(stepDone(s.id)?'check':s.i)}${s.t}</button>`).join('')}</div>`}
+   <div class="map">${FORM_STEPS.map(s=>`<button class="mp" data-go="${SI[s.id]}">${ic(s.i)}${s.t}</button>`).join('')}</div>`}
 
 function summary(){
   const checks=[['firma','Údaje firmy',filled(findQ('firma'))],['sluzby','Služby',filled(findQ('sluzby'))],['zakaznici','Formulář na webu',filled(findQ('pole'))],
@@ -477,8 +493,8 @@ function sideHTML(){const id=STEPS[step].id;const recs=S.files.filter(f=>f.krok=
    <div class="vhead"><span class="qi" style="color:var(--gold)">${ic('mic')}</span><b>Nechce se ti psát?</b></div><p class="cap">Namluv to. ${step?'Hlasovka se uloží k tomuhle kroku.':''}</p>
    <button class="micbig ${recOn()?'rec':''}" data-rec="${id}"><span class="mc">${ic(recOn()?'stop':'mic')}</span><span>${recOn()?`<b id="vtime">0:00</b><span class="wave">${'<i></i>'.repeat(9)}</span>`:`<b>${recs.length?'Nahrát další':'Nahrát hlasovku'}</b><span>Klikni, mluv, klikni</span>`}</span></button>
    <div class="vlist" id="vlist">${recs.map(vlHTML).join('')}</div>
-   <button class="notetog" data-notetog>${ic('note')}${n?'Poznámka':'Napsat poznámku'}</button>
-   <textarea class="tin" data-notek="${id}" placeholder="Cokoliv k tomuhle kroku" ${n?'':'hidden'}>${esc(n)}</textarea></div>`}
+   <p class="notetog">${ic('note')}Poznámka</p>
+   <textarea class="tin" data-notek="${id}" placeholder="Cokoliv k tomuhle kroku">${esc(n)}</textarea></div>`}
 const vlHTML=f=>`<div class="vl ${f.err?'err':''}">${ic(f.err?'x':f.id?'audio':'clock')}<span>${esc(f.err||f.name.replace(/\.(m4a|webm)$/,''))}</span>${f.id||f.err?`<button class="x" data-del="${f.id||f.tmp}" aria-label="Smazat">${ic('x')}</button>`:''}</div>`;
 
 function render(){
@@ -487,12 +503,11 @@ function render(){
   const s=STEPS[step];const last=step===STEPS.length-1;
   const nRec=S.files.filter(f=>f.krok===s.id+'-hlasovka'&&f.id).length+(S.notes[s.id]?1:0);
   $('#app').innerHTML=`<div class="top"><a class="mark" href="/" aria-label="JANTREX">JANTRE<b>X</b></a><span class="savest"></span></div>
-   <nav class="stepper" aria-label="Kroky"><div class="stp-in">${STEPS.map((x,i)=>{const d=i!==step&&(stepDone(x.id)||(x.id==='odeslat'&&S.sentAt));
-     return `<button class="stp ${i===step?'active':''} ${d?'done':''}" data-go="${i}" ${i===step?'aria-current="step"':''} title="${x.t}" aria-label="${x.t}"><span class="si">${ic(x.i)}<span class="ck" ${d?'':'hidden'}>${ic('check')}</span></span><span class="l">${x.t}</span></button>`}).join('')}</div>
+   <nav class="stepper" aria-label="Kroky"><div class="stp-in">${STEPS.map((x,i)=>{const d=i!==step&&(S.seen||[]).includes(i)&&(i<step||x.id!=='odeslat'||S.sentAt);
+     return `<button class="stp ${i===step?'active':''} ${d?'done':''}" data-go="${i}" ${i===step?'aria-current="step"':''} title="${x.t}" aria-label="${x.t}"><span class="sc">${ic(d?'check':x.i)}</span><span class="l">${x.t}</span></button>`}).join('')}</div>
     <div class="stp-bar"><b style="width:${step/(STEPS.length-1)*100}%"></b></div></nav>
    <div class="lay"><main class="step" id="main">
     ${step===0?intro():`<div class="sthead"><span class="tile">${ic(s.i)}</span><div><p class="kicker">Krok ${step} z ${STEPS.length-1}</p><h2>${s.t}</h2></div></div>
-      ${s.known?`<div class="known">${s.known.map(([icn,t])=>`<span class="kn"><span class="c">${ic('check')}</span>${t}</span>`).join('')}</div>`:''}
       ${s.q?s.q.map(qHTML).join(''):summary()}`}
     <div class="stnav">${step?`<button class="btn btn-g" data-go="${step-1}">${ic('back')}Zpět</button>`:'<span></span>'}${last?'':`<button class="btn btn-p" data-go="${step+1}">${step?'Pokračovat':'Jdeme na to'}${ic('arrow')}</button>`}</div>
    </main>
@@ -505,7 +520,7 @@ function render(){
   const a=$('.stp.active');if(a){const n=a.parentElement;if(n.scrollWidth>n.clientWidth)n.scrollLeft=a.offsetLeft-n.offsetLeft-n.clientWidth/2+a.offsetWidth/2}
   bind();
 }
-function go(i){if(recOn()){toast('Nejdřív zastav nahrávání');return}step=Math.max(0,Math.min(STEPS.length-1,i));persistLocal();render();scrollTo({top:0,behavior:'smooth'})}
+function go(i){if(recOn()){toast('Nejdřív zastav nahrávání');return}step=Math.max(0,Math.min(STEPS.length-1,i));S.seen=S.seen||[0];if(!S.seen.includes(step))S.seen.push(step);persistLocal();render();scrollTo({top:0,behavior:'smooth'})}
 function redrawSide(){const sd=$('#side');if(sd){const open=sd.classList.contains('open');sd.innerHTML=sideHTML();bindSide()}
   const mb=$('.mbtn');if(mb){const id=STEPS[step].id;const n=S.files.filter(f=>f.krok===id+'-hlasovka'&&f.id).length+(S.notes[id]?1:0);mb.classList.toggle('rec',recOn());mb.innerHTML=ic('mic')+(n?`<span class="badge">${n}</span>`:'')}}
 
@@ -518,6 +533,8 @@ function bind(){
     b.classList.toggle('on',on);b.setAttribute('aria-pressed',on);
     if(b.classList.contains('chip')){const q=findQ(k);const o=q.opts.find(o=>o[0]===v);b.innerHTML=ic(on?'check':o[2])+o[1]}
     setA(k,arr)});
+  m.querySelectorAll('[data-phase]').forEach(b=>b.onclick=()=>{const k=b.dataset.phase,id=b.dataset.id;const cur=Object.assign({},A[k]||{});cur[id]=cur[id]===b.dataset.v?undefined:b.dataset.v;if(!cur[id])delete cur[id];
+    const tl=b.closest('.tl');tl.classList.toggle('on',!!cur[id]);tl.querySelectorAll('[data-phase]').forEach(x=>{const on=cur[id]===x.dataset.v;x.classList.toggle('on',on);x.setAttribute('aria-pressed',on)});setA(k,cur)});
   m.querySelectorAll('[data-one]').forEach(b=>b.onclick=()=>{const k=b.dataset.one;const v=A[k]===b.dataset.v?'':b.dataset.v;
     b.closest('.q').querySelectorAll('[data-one]').forEach(x=>{const on=x.dataset.v===v;x.classList.toggle('on',on);x.setAttribute('aria-pressed',on)});
     if(k==='pristup'){const r=$('#accReveal');if(r){r.classList.toggle('open',v==='udaje');if(v==='udaje')setTimeout(()=>{const f=r.querySelector('input');f&&f.focus()},300)}}
@@ -533,7 +550,6 @@ function bind(){
 }
 function bindSide(){const sd=$('#side');if(!sd)return;
   sd.querySelectorAll('[data-rec]').forEach(b=>b.onclick=()=>toggleRec(b.dataset.rec));
-  const nt=sd.querySelector('[data-notetog]');if(nt)nt.onclick=()=>{const t=sd.querySelector('textarea');t.hidden=!t.hidden;if(!t.hidden)t.focus()};
   sd.querySelectorAll('[data-notek]').forEach(t=>t.oninput=()=>{S.notes[t.dataset.notek]=t.value;save()});
   const cl=sd.querySelector('[data-closeside]');if(cl)cl.onclick=()=>sd.classList.remove('open');
 }
@@ -611,6 +627,7 @@ let ANS=null;
 function optLabel(q,v){const o=(q.opts||[]).find(o=>o[0]===v);return o?o[1]:v==='nevim'?'Nevím':v}
 function fmtVal(q,a){const v=a[q.k];
   if(q.type==='multi'||q.type==='chips'){const arr=(v||[]).map(x=>optLabel(q,x));if(q.other&&a[q.other])arr.push(a[q.other]);return arr.join(', ')}
+  if(q.type==='phase'){const c=v||{};const L={ted:'Teď',pozdeji:'Později'};return ['ted','pozdeji'].map(ph=>{const it=q.opts.filter(o=>c[o[0]]===ph).map(o=>o[1]);return it.length?`${L[ph]}: ${it.join(', ')}`:''}).filter(Boolean).join('\n')}
   if(q.type==='one')return v?optLabel(q,v):'';
   if(q.type==='logo')return ({ok:'Použij tohle logo',jine:'Pošle jiné'})[v]||'';
   if(q.type==='access')return ({spravce:'Přidá tě jako správce',udaje:'Dal přihlašovací údaje',zavolat:'Zavoláte si'})[v]||'';
@@ -672,8 +689,7 @@ async function sha(t){const b=await crypto.subtle.digest('SHA-256',new TextEncod
 function gateOk(){try{return localStorage.getItem(GKEY)===GATE}catch(e){return false}}
 function renderGate(){
   $('#app').innerHTML=`<div style="min-height:80vh;display:grid;place-items:center"><div class="card" style="width:100%;max-width:400px;text-align:center;padding:28px 22px">
-    <span class="mark" style="font-size:24px;margin-bottom:22px">JANTRE<b>X</b></span>
-    <p class="kicker" style="margin-bottom:6px">Podklady k webu</p><h2 style="margin-bottom:18px">Vstup</h2>
+    <span class="mark" style="font-size:24px;margin-bottom:24px">JANTRE<b>X</b></span>
     <form id="gf"><label class="inp">${ic('lock')}<input class="tin" type="password" id="gp" placeholder="Heslo" autocomplete="current-password" aria-label="Heslo"><span class="ck2">${ic('check')}</span></label>
     <button class="btn btn-p" style="margin-top:12px;width:100%">Vstoupit${ic('arrow')}</button><p class="cap" id="gerr" style="color:var(--err);margin-top:10px;min-height:20px"></p></form></div></div>`;
   const f=$('#gp');setTimeout(()=>f.focus(),50);
