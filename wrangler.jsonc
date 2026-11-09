@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "jantrex-podklady",
+  "name": "jantrex",
   "main": "src/worker.js",
   "compatibility_date": "2025-10-01",
   "assets": {
@@ -10,9 +10,7 @@
     "run_worker_first": ["/api/*", "/soubor/*"]
   },
   "kv_namespaces": [
-    // Vytvoř KV "jantrex-podklady" (Storage & Databases -> KV) a sem vlož jeho ID:
-    { "binding": "PODKLADY", "id": "SEM_VLOZ_ID_KV" }
+    { "binding": "PODKLADY", "id": "9fedbcfcf6024fbfac4dc68ff8c4fb91" }
   ]
-  // Heslo pro /odpovedi se nastavuje jako secret HESLO (Settings -> Variables and Secrets),
-  // do souboru ho nepiš.
+  // Heslo pro /odpovedi: secret HESLO v Settings -> Variables and Secrets (do souboru ho nepiš)
 }
