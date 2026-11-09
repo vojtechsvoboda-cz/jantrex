@@ -2,7 +2,7 @@
 
 Vícekrokový formulář pro Honzu (JANTREX realizace s.r.o.), aby poslal podklady k webu. Odpovědi i nahrané soubory se ukládají na Cloudflare.
 
-- `/` je formulář: 8 kroků (Firma, Služby, Zákazníci, Logo a vzhled, Fotky, Doména a online, Co dál, Odeslat). Ukládá se průběžně, jde nahrávat soubory a v každém kroku namluvit hlasovku.
+- `/` je formulář za heslem (lehký zámek, v kódu je jen otisk hesla, ne heslo samotné): 8 kroků (Firma, Služby, Zákazníci, Logo a vzhled, Fotky, Doména a online, Co dál, Odeslat). Ukládá se průběžně, jde nahrávat soubory a v každém kroku namluvit hlasovku.
 - `/odpovedi` je přehled pro tebe, zamčený heslem: všechny odpovědi, náhledy fotek, přehrávač hlasovek, odkazy ke stažení, tlačítko „Kopírovat jako text“ a historie odeslaných verzí.
 - `src/worker.js` je API. Odpovědi i soubory jsou v jednom KV (`podklady:aktualni`, `odeslano:<čas>`, `soubor:<id>`).
 
