@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>JANTREX · Podklady k webu</title>
+<meta name="robots" content="noindex, nofollow">
+<meta property="og:title" content="JANTREX · Podklady k webu">
+<meta property="og:description" content="Pár kliknutí. Co nevíš, přeskoč.">
+<meta property="og:image" content="/og.jpg">
+<meta name="theme-color" content="#0a0a09">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0a09;--ink:#f3efe6;--muted:#a59f92;--dim:#6f6a60;
+  --gold:#c9a55c;--gold2:#e6cd8f;--gold-d:#8d7038;--goldbg:rgba(201,165,92,.12);
+  --card:rgba(20,19,17,.82);--card2:rgba(255,255,255,.035);--line:rgba(201,165,92,.24);--line2:rgba(255,255,255,.08);
+  --ok:#8fc79a;--err:#e48a7a;--r:16px;--rs:12px;
+  --disp:'Cinzel',Georgia,serif;--body:'Manrope',system-ui,-apple-system,Segoe UI,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--body);color:var(--ink);background:var(--bg);font-size:16px;line-height:1.5;min-height:100vh;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;z-index:-2;background:url(/marble.jpg) center/cover no-repeat;opacity:.5}
+body::after{content:"";position:fixed;inset:0;z-index:-1;background:radial-gradient(120% 70% at 50% 0%,rgba(10,10,9,.5),rgba(10,10,9,.93) 60%,#0a0a09)}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0;-webkit-tap-highlight-color:transparent}
+a{color:var(--gold2)}
+svg.i{width:20px;height:20px;flex:none;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+:focus-visible{outline:2px solid var(--gold2);outline-offset:2px;border-radius:10px}
+.wrap{max-width:1180px;margin:0 auto;padding:20px 24px 120px}
+
+/* top */
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.mark{display:inline-flex;align-items:center;border:1.5px solid var(--gold);padding:5px 12px 4px;font-family:var(--disp);font-weight:600;letter-spacing:.06em;font-size:19px;line-height:1;color:#f1ede4;text-decoration:none}
+.mark b{color:var(--gold);font-weight:600;font-size:1.18em}
+.savest{font-size:13px;color:var(--dim);display:flex;align-items:center;gap:6px;min-height:20px}
+.savest .dot{width:7px;height:7px;border-radius:50%;background:var(--dim)}
+.savest.ok .dot{background:var(--ok)}.savest.busy .dot{background:var(--gold);animation:pulse 1s infinite}
+.savest.bad{color:var(--err)}.savest.bad .dot{background:var(--err)}
+@keyframes pulse{50%{opacity:.3}}
+
+/* stepper (jako Top Speaker): prošlé kroky mají fajfku v kroužku */
+.stepper{position:sticky;top:0;z-index:20;margin:0 -24px 22px;padding:10px 24px 0;background:linear-gradient(#0a0a09 75%,rgba(10,10,9,0))}
+.stp-in{display:flex;gap:4px;padding-bottom:10px}
+.stp{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:6px;padding:9px 4px 8px;border-radius:12px;border:1px solid transparent;color:var(--muted);font-size:13px;font-weight:700;transition:.2s}
+.stp .l{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.stp .sc{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--card2);border:1px solid var(--line2);color:var(--muted);transition:.2s}
+.stp .sc svg.i{width:15px;height:15px}
+.stp:hover{color:var(--ink);background:rgba(255,255,255,.03)}
+.stp.done{color:#d9d3c7}
+.stp.done .sc{background:rgba(201,165,92,.16);border-color:var(--line);color:var(--gold2)}
+.stp.done .sc svg.i{stroke-width:2.6;width:14px;height:14px}
+.stp.active{border-color:var(--line);background:rgba(201,165,92,.08);color:var(--ink)}
+.stp.active .sc{background:linear-gradient(135deg,var(--gold2),var(--gold));border-color:var(--gold);color:#16130c;box-shadow:0 4px 16px -6px rgba(201,165,92,.8)}
+.stp-bar{height:2px;background:var(--line2);border-radius:2px;overflow:hidden}
+.stp-bar b{display:block;height:100%;background:linear-gradient(90deg,var(--gold-d),var(--gold2));transition:width .4s ease}
+@media (max-width:720px){.stp .l{display:none}.stp{padding:8px 2px}}
+
+/* fáze (Co dál) */
+.tiles.ph{grid-template-columns:repeat(auto-fill,minmax(190px,1fr))}
+@media (max-width:520px){.tiles.ph{grid-template-columns:1fr 1fr}}
+.ph .tl{cursor:default;min-height:0}
+.ph .tl:hover{transform:none}
+.ph .tl small{margin-top:-4px;flex:1}
+.ph .seg{display:flex;gap:4px;width:100%;background:rgba(0,0,0,.35);border:1px solid var(--line2);border-radius:999px;padding:3px;margin-top:4px}
+.ph .seg button{flex:1;padding:6px 4px;border-radius:999px;font-size:12.5px;font-weight:800;color:var(--muted);transition:.15s}
+.ph .seg button:hover{color:var(--ink)}
+.ph .seg button.on{background:var(--gold);color:#16130c}
+.ph .segfix{flex:1;text-align:center;padding:6px 4px;font-size:12.5px;font-weight:800;color:var(--gold2)}
+.chip.nv{margin-top:12px;padding:7px 12px 7px 10px;font-size:13px}
+
+/* layout s pravým panelem */
+.lay{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:24px;align-items:start}
+@media (max-width:980px){.lay{grid-template-columns:1fr}}
+
+.step{animation:in .35s ease}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.sthead{display:flex;align-items:center;gap:14px;margin:2px 0 18px}
+.tile{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;flex:none;color:var(--gold2);background:linear-gradient(160deg,rgba(201,165,92,.2),rgba(201,165,92,.04));border:1px solid var(--line)}
+.kicker{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:800}
+h1,h2{font-family:var(--disp);font-weight:600;letter-spacing:.02em;line-height:1.15}
+h1{font-size:clamp(28px,5vw,40px)}
+h2{font-size:clamp(23px,3.6vw,30px)}
+.cap{font-size:13.5px;color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line2);border-radius:var(--r);padding:18px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.q{margin-bottom:14px;transition:border-color .2s}
+.q.filled{border-color:rgba(143,199,154,.22)}
+.qh{display:flex;gap:10px;align-items:center;margin-bottom:12px}
+.qh .qi{color:var(--gold);display:grid}
+.ql{font-weight:800;font-size:15.5px;flex:1}
+.opt{font-size:11.5px;color:var(--dim);font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.okb{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:var(--ok);color:#0b1a0e;transform:scale(0);transition:transform .25s cubic-bezier(.3,1.6,.5,1)}
+.okb svg.i{width:12px;height:12px;stroke-width:3.2}
+.filled>.qh .okb{transform:scale(1)}
+
+/* "Tohle už mám" */
+.known{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.kn{display:inline-flex;align-items:center;gap:8px;padding:8px 12px 8px 9px;border-radius:999px;background:rgba(143,199,154,.08);border:1px solid rgba(143,199,154,.25);font-size:13.5px;font-weight:600;color:#d7e9da}
+.kn .c{width:18px;height:18px;border-radius:50%;background:var(--ok);display:grid;place-items:center;color:#0b1a0e}
+.kn .c svg.i{width:10px;height:10px;stroke-width:3.4}
+.kn svg.i.g{width:15px;height:15px;color:var(--ok)}
+
+/* inputy s ikonou */
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fields .full{grid-column:1/-1}
+@media (max-width:620px){.fields{grid-template-columns:1fr}}
+.inp{position:relative;display:block}
+.inp>svg.i:first-child{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--dim);transition:.2s;pointer-events:none}
+.inp .tin{padding-left:44px;padding-right:40px}
+.inp .ck2{position:absolute;right:12px;top:50%;transform:translateY(-50%) scale(0);width:20px;height:20px;border-radius:50%;background:var(--ok);display:grid;place-items:center;color:#0b1a0e;transition:transform .25s cubic-bezier(.3,1.6,.5,1)}
+.inp .ck2 svg.i{width:11px;height:11px;stroke-width:3.2}
+.inp.has .ck2{transform:translateY(-50%) scale(1)}
+.inp.has>svg.i:first-child,.inp:focus-within>svg.i:first-child{color:var(--gold)}
+.tin{width:100%;background:rgba(0,0,0,.38);border:1px solid var(--line2);border-radius:var(--rs);padding:13px 14px;outline:none;transition:.15s;font-size:16px}
+.tin::placeholder{color:#6a655c}
+.tin:focus{border-color:var(--gold);background:rgba(0,0,0,.55);box-shadow:0 0 0 3px rgba(201,165,92,.12)}
+textarea.tin{min-height:90px;resize:vertical}
+.inp textarea.tin{padding-top:13px}
+.inp:has(textarea)>svg.i:first-child{top:16px;transform:none}
+.inp:has(textarea) .ck2{top:14px;transform:scale(0)}.inp.has:has(textarea) .ck2{transform:scale(1)}
+
+/* ikonové karty */
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(138px,1fr));gap:10px}
+.tiles.c3{grid-template-columns:repeat(3,1fr)}
+@media (max-width:520px){.tiles{grid-template-columns:repeat(2,1fr)}.tiles.c3{grid-template-columns:repeat(3,1fr)}}
+.tl{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:10px;text-align:left;padding:14px;border-radius:14px;border:1px solid var(--line2);background:var(--card2);transition:transform .15s,border-color .15s,background .15s;min-height:96px}
+.tl:hover{border-color:var(--line);transform:translateY(-2px)}
+.tl:active{transform:scale(.97)}
+.tl .ti{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:rgba(255,255,255,.04);color:var(--gold2);transition:.15s}
+.tl b{font-size:14px;font-weight:700;line-height:1.3}
+.tl small{font-size:12.5px;color:var(--muted);line-height:1.35;margin-top:-6px}
+.tl .tk{position:absolute;right:10px;top:10px;width:22px;height:22px;border-radius:50%;border:1.5px solid #4c483f;display:grid;place-items:center;transition:.2s}
+.tl .tk svg.i{width:12px;height:12px;stroke-width:3;opacity:0;color:#16130c}
+.tl.on{border-color:var(--gold);background:var(--goldbg)}
+.tl.on .ti{background:var(--gold);color:#16130c}
+.tl.on .tk{background:var(--gold);border-color:var(--gold)}
+.tl.on .tk svg.i{opacity:1}
+.tl.on{animation:pop .25s ease}
+@keyframes pop{50%{transform:scale(1.03)}}
+.c3 .tl{align-items:center;text-align:center;min-height:0;padding:16px 10px}
+.c3 .tl .tk{display:none}
+.linkx{margin-top:10px;display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:700;color:var(--muted);padding:6px 4px}
+.linkx.on{color:var(--gold2)}
+.linkx:hover{color:var(--ink)}
+
+/* chips */
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:9px 14px 9px 11px;border-radius:999px;border:1px solid var(--line2);background:var(--card2);font-size:14px;font-weight:600;color:#ddd7cb;transition:.15s}
+.chip svg.i{width:16px;height:16px;color:var(--gold)}
+.chip:hover{border-color:var(--line)}
+.chip.on{border-color:var(--gold);background:var(--goldbg);color:var(--gold2)}
+.chip.on svg.i{color:var(--gold2)}
+.other{margin-top:10px}
+
+/* rozbalovací přihlašovací údaje */
+.reveal{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s ease}
+.reveal.open{grid-template-rows:1fr}
+.reveal>div{overflow:hidden}
+.reveal .inner{padding-top:12px}
+.warn{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;color:var(--muted);margin-top:8px}
+.warn svg.i{width:15px;height:15px;color:var(--gold);margin-top:2px}
+
+/* uploads */
+.drop{position:relative;display:flex;align-items:center;gap:14px;padding:16px;border:1.5px dashed rgba(201,165,92,.38);border-radius:var(--rs);background:rgba(201,165,92,.04);transition:.15s;cursor:pointer}
+.drop:hover,.drop.over{border-color:var(--gold2);background:rgba(201,165,92,.1)}
+.drop input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%}
+.drop b{display:block;font-size:15px}
+.files{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;margin-top:10px}
+.files:empty{display:none}
+.file{position:relative;aspect-ratio:1;border-radius:12px;overflow:hidden;background:#1b1a17 center/cover;border:1px solid var(--line2);display:flex;flex-direction:column;justify-content:flex-end}
+.file .fi{position:absolute;inset:0;display:grid;place-items:center;color:var(--gold)}
+.file .fi svg.i{width:26px;height:26px}
+.file .fn{position:relative;font-size:11px;font-weight:600;padding:16px 7px 6px;background:linear-gradient(transparent,rgba(0,0,0,.85));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.file .bar{position:absolute;left:8px;right:8px;bottom:8px;height:4px;background:rgba(255,255,255,.15);border-radius:4px;overflow:hidden}
+.file .bar i{display:block;height:100%;width:0;background:var(--gold);transition:width .2s}
+.file.up{opacity:.75}
+.file.err{border-color:var(--err)}
+.file.err .fn{color:var(--err);white-space:normal}
+.file .x{position:absolute;right:5px;top:5px;width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,.65);display:grid;place-items:center;color:#fff}
+.file .x svg.i{width:14px;height:14px}
+.file .done{position:absolute;left:6px;top:6px;width:20px;height:20px;border-radius:50%;background:var(--ok);display:grid;place-items:center;color:#0b1a0e}
+.file .done svg.i{width:11px;height:11px;stroke-width:3.2}
+
+/* logo */
+.logo-row{display:grid;grid-template-columns:200px 1fr;gap:16px;align-items:center}
+.logo-row img{width:100%;border-radius:12px;border:1px solid var(--line2);display:block}
+@media (max-width:560px){.logo-row{grid-template-columns:1fr}}
+
+/* úvod */
+.hero h1 span{color:var(--gold)}
+.hero p{color:var(--muted);margin-top:8px;max-width:52ch}
+.ways{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:22px 0}
+.way{display:flex;align-items:center;gap:12px;padding:14px;border-radius:14px;background:var(--card2);border:1px solid var(--line2)}
+.way .ti{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:var(--goldbg);color:var(--gold2);flex:none}
+.way b{font-size:14.5px;display:block}
+.way span{font-size:12.5px;color:var(--muted)}
+@media (max-width:640px){.ways{grid-template-columns:1fr}}
+.map{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media (max-width:640px){.map{grid-template-columns:repeat(2,1fr)}}
+.mp{display:flex;align-items:center;gap:10px;padding:12px;border-radius:12px;border:1px solid var(--line2);background:var(--card2);font-weight:700;font-size:14px;text-align:left;transition:.15s}
+.mp:hover{border-color:var(--line);transform:translateY(-2px)}
+.mp svg.i{color:var(--gold)}
+.mp.ok{border-color:rgba(143,199,154,.3)}
+.mp.ok svg.i{color:var(--ok)}
+
+/* pravý panel: hlasovka + poznámka */
+.side{position:sticky;top:96px}
+.voicecard{padding:18px}
+.vhead{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.vhead b{font-size:15px;font-weight:800}
+.micbig{width:100%;display:flex;align-items:center;gap:14px;padding:12px;margin-top:12px;border-radius:14px;border:1px solid var(--line);background:var(--goldbg);text-align:left;transition:.15s}
+.micbig:hover{background:rgba(201,165,92,.18)}
+.micbig .mc{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--gold2),var(--gold));color:#16130c;flex:none;transition:.2s}
+.micbig b{display:block;font-size:15px;color:var(--ink)}
+.micbig span{font-size:12.5px;color:var(--muted)}
+.micbig.rec{border-color:#e0715f;background:rgba(224,113,95,.12)}
+.micbig.rec .mc{background:#e0715f;color:#fff;animation:ring 1.4s infinite}
+@keyframes ring{0%{box-shadow:0 0 0 0 rgba(224,113,95,.5)}100%{box-shadow:0 0 0 14px rgba(224,113,95,0)}}
+.wave{display:flex;align-items:center;gap:3px;height:22px;margin-top:4px}
+.wave i{width:3px;border-radius:3px;background:#ffb4a6;animation:wv 0.9s ease-in-out infinite}
+@keyframes wv{0%,100%{height:4px}50%{height:20px}}
+.vlist{display:grid;gap:6px;margin-top:10px}
+.vl{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;background:rgba(0,0,0,.3);font-size:13px}
+.vl svg.i{width:16px;height:16px;color:var(--gold)}
+.vl span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vl .x{width:24px;height:24px;display:grid;place-items:center;color:var(--muted)}
+.vl .x svg.i{color:inherit;width:14px;height:14px}
+.vl.err{color:var(--err)}
+.notetog{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:14px;font-weight:700;color:var(--muted)}
+.notetog:hover{color:var(--ink)}
+.side textarea{margin-top:8px;min-height:110px}
+.sideclose{display:none}
+
+/* mobil: spodní lišta + vysouvací panel */
+.mbar{display:none}
+@media (max-width:980px){
+  .side{position:fixed;left:0;right:0;bottom:0;top:auto;z-index:40;transform:translateY(105%);transition:transform .3s ease;padding:0 10px calc(84px + env(safe-area-inset-bottom))}
+  .side.open{transform:none}
+  .side .voicecard{border-color:var(--line);box-shadow:0 -10px 40px rgba(0,0,0,.6);background:#151412}
+  .sideclose{display:grid;position:absolute;right:18px;top:12px;width:32px;height:32px;place-items:center;color:var(--muted)}
+  .stnav{display:none}
+  .mbar{display:flex;align-items:center;gap:10px;position:fixed;left:0;right:0;bottom:0;z-index:45;padding:12px 14px calc(12px + env(safe-area-inset-bottom));background:rgba(10,10,9,.94);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line2)}
+  .mbar .btn{flex:1;padding:13px 10px}
+  .mbtn{position:relative;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;flex:none;border:1px solid var(--line);color:var(--gold2);background:var(--goldbg)}
+  .mbtn.rec{background:#e0715f;color:#fff;border-color:#e0715f;animation:ring 1.4s infinite}
+  .mbtn .badge{position:absolute;right:-2px;top:-2px;min-width:18px;height:18px;border-radius:9px;background:var(--ok);color:#0b1a0e;font-size:11px;font-weight:800;display:grid;place-items:center;padding:0 4px}
+  .mback{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line2);color:#d9d3c7;flex:none}
+  .wrap{padding:16px 16px 120px}
+  .stepper{margin:0 -16px 18px;padding:8px 16px 0}
+}
+
+/* shrnutí */
+.todo{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media (max-width:620px){.todo{grid-template-columns:1fr}}
+.td{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:12px;background:var(--card2);border:1px solid var(--line2);text-align:left;font-size:14px;font-weight:600;transition:.15s}
+.td:hover{border-color:var(--line)}
+.td .ic{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;flex:none;border:1.5px solid #4c483f;color:var(--dim)}
+.td .ic svg.i{width:13px;height:13px}
+.td.ok .ic{background:var(--ok);border-color:var(--ok);color:#0b1a0e}
+.td.ok .ic svg.i{stroke-width:3}
+.td small{margin-left:auto;color:var(--gold2);font-weight:700;font-size:12px}
+.td.ok small{display:none}
+.sent{display:flex;align-items:center;gap:14px}
+.sent .tile{color:#0b1a0e;background:var(--ok);border-color:var(--ok)}
+
+/* tlačítka */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:13px 22px;border-radius:999px;font-weight:800;font-size:15.5px;transition:.15s;white-space:nowrap}
+.btn-p{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#16130c;box-shadow:0 6px 24px -8px rgba(201,165,92,.55)}
+.btn-p:hover{filter:brightness(1.06);transform:translateY(-1px)}
+.btn-p:disabled{opacity:.6;transform:none}
+.btn-g{border:1px solid var(--line2);color:#d9d3c7}
+.btn-g:hover{border-color:var(--line)}
+.btn-sm{padding:9px 14px;font-size:14px}
+.stnav{display:flex;justify-content:space-between;gap:10px;margin-top:22px}
+.foot{margin-top:40px;text-align:center;font-size:12.5px;color:var(--dim)}
+.foot a{color:var(--muted);text-decoration:none}
+.toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(20px);opacity:0;background:#1d1b17;border:1px solid var(--line);color:var(--ink);padding:11px 16px;border-radius:12px;font-size:14px;font-weight:600;transition:.25s;z-index:60;pointer-events:none;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%)}
+
+/* /odpovedi */
+.ans{max-width:860px;margin:0 auto}
+.ans h3{font-family:var(--disp);font-size:19px;font-weight:600;display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.ans h3 .tile{width:34px;height:34px;border-radius:9px}
+.ans h3 .tile svg.i{width:17px;height:17px}
+.kv{display:grid;grid-template-columns:minmax(120px,36%) 1fr;gap:4px 16px;padding:9px 0;border-top:1px solid var(--line2);font-size:14.5px}
+.kv:first-of-type{border-top:0}
+.kv dt{color:var(--muted)}
+.kv dd{white-space:pre-wrap;word-break:break-word}
+.kv dd.empty{color:var(--dim)}
+@media (max-width:520px){.kv{grid-template-columns:1fr}}
+.agal{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin:8px 0 6px}
+.ag{display:flex;flex-direction:column;border-radius:12px;overflow:hidden;background:rgba(0,0,0,.35);border:1px solid var(--line2);text-decoration:none;color:var(--ink)}
+.ag .im{aspect-ratio:4/3;background:#1b1a17 center/cover;display:grid;place-items:center;color:var(--gold)}
+.ag .im svg.i{width:28px;height:28px}
+.ag span{font-size:12.5px;padding:7px 9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ag small{font-size:11.5px;color:var(--dim);padding:0 9px 8px}
+.aud{display:grid;gap:8px;margin:8px 0}
+.aud audio{width:100%;height:38px}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:12.5px;font-weight:700;background:var(--card2);border:1px solid var(--line2);color:var(--muted)}
+.pill svg.i{width:14px;height:14px}
+.pill.g{color:#0b1a0e;background:var(--ok);border-color:var(--ok)}
+.pill.y{color:var(--gold2);border-color:var(--line)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+details.ver{border-top:1px solid var(--line2);padding:10px 0}
+details.ver summary{cursor:pointer;font-weight:600;font-size:14.5px}
+.secret{font-family:ui-monospace,Menlo,monospace;letter-spacing:.05em}
+.showpw{margin-left:8px;font-size:12.5px;font-weight:700;color:var(--gold2)}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<div class="toast" id="toast"></div>
+<script>
+'use strict';
+/* ================= ikony ================= */
+const IC={
+ arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',back:'<path d="M19 12H5M11 6l-6 6 6 6"/>',check:'<path d="M5 12.5l4.5 4.5L19 7"/>',x:'<path d="M6 6l12 12M18 6L6 18"/>',
+ spark:'<path d="M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/>',
+ building:'<path d="M4 21V5a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v16M15 9h4a1 1 0 0 1 1 1v11M8 8h3M8 12h3M8 16h3M3 21h18"/>',
+ flame:'<path d="M12 3c1 3.5 5 5.5 5 10a5 5 0 0 1-10 0c0-2 1-3.5 2-4.5.3 1.5 1 2.5 2 3 0-3 0-5.5 1-8.5z"/>',
+ fan:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="1.6"/><path d="M12 10.4c0-3 1-5 3-5s2 3-1 5M13.6 12c3 0 5 1 5 3s-3 2-5-1M12 13.6c0 3-1 5-3 5s-2-3 1-5M10.4 12c-3 0-5-1-5-3s3-2 5 1"/>',
+ floor:'<path d="M3 20h18M5 16c2-2 4 2 6 0s4 2 6 0 2-1 2-1M5 12c2-2 4 2 6 0s4 2 6 0 2-1 2-1"/>',
+ drop:'<path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/>',
+ home:'<path d="M3 11l9-7 9 7M5 9.5V20h14V9.5M10 20v-6h4v6"/>',hammer:'<path d="M14 6l4 4M12.5 7.5L4 16l4 4 8.5-8.5M14 6l2-2 4 4-2 2"/>',
+ pool:'<path d="M3 17c1.5 1 3 1 4.5 0s3-1 4.5 0 3 1 4.5 0 3-1 4.5 0M3 21c1.5 1 3 1 4.5 0s3-1 4.5 0 3 1 4.5 0 3-1 4.5 0M8 14V5a2 2 0 0 1 4 0M16 14V5a2 2 0 0 0-4 0M8 9h8"/>',
+ wrench:'<path d="M14.7 6.3a4 4 0 0 0 5 5L21 13l-8 8-3-3 1.4-1.3a4 4 0 0 0-5-5L5 13 3 11l8-8 2 2-1.3 1.3z"/>',
+ bolt:'<path d="M13 3L5 14h6l-1 7 8-11h-6z"/>',users:'<path d="M16 19v-1a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v1M9.5 10a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zM21 19v-1a4 4 0 0 0-3-3.87M16 3.13a3.5 3.5 0 0 1 0 6.75"/>',
+ briefcase:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/>',
+ crane:'<path d="M5 21V4l14 0M5 8h14M9 4l-4 4M17 4v5M15 9h4v3h-4zM3 21h6"/>',key:'<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3M14 9l2 2"/>',
+ pen:'<path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4zM13.5 6.5l4 4"/>',camera:'<path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.5" r="3.5"/>',
+ globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"/>',
+ layers:'<path d="M12 3l9 5-9 5-9-5 9-5zM3 13l9 5 9-5"/>',send:'<path d="M21 3L10 14M21 3l-7 18-4-7-7-4 18-7z"/>',
+ mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',stop:'<rect x="7" y="7" width="10" height="10" rx="2"/>',
+ note:'<path d="M5 4h10l4 4v12H5zM15 4v4h4M9 13h6M9 17h4"/>',upload:'<path d="M12 16V4M7 9l5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/>',
+ file:'<path d="M6 3h8l5 5v13H6zM14 3v5h5"/>',image:'<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/>',
+ audio:'<path d="M4 10v4M8 6v12M12 9v6M16 4v16M20 10v4"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+ phone:'<path d="M6.5 3h3l1.5 4.5-2 1.5a12 12 0 0 0 6 6l1.5-2 4.5 1.5v3a2 2 0 0 1-2 2A17 17 0 0 1 4.5 5a2 2 0 0 1 2-2z"/>',
+ lock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',copy:'<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/>',
+ refresh:'<path d="M20 11a8 8 0 0 0-14.6-4.5L4 8M4 4v4h4M4 13a8 8 0 0 0 14.6 4.5L20 16M20 20v-4h-4"/>',
+ mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',pin:'<path d="M12 21s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/>',
+ user:'<circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/>',hash:'<path d="M5 9h14M5 15h14M10 4L8 20M16 4l-2 16"/>',
+ cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',rocket:'<path d="M5 15c-1.5 1.5-2 5-2 5s3.5-.5 5-2M9 12a14 14 0 0 1 9-9c1 0 3 2 3 3a14 14 0 0 1-9 9M9 12l3 3M9 12H5l2-4h5M12 15v4l4-2v-5"/>',
+ coffee:'<path d="M4 9h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5zM17 10h1.5a2.5 2.5 0 0 1 0 5H17M8 3v3M12 3v3"/>',
+ zap:'<path d="M13 3L5 14h6l-1 7 8-11h-6z"/>',chat:'<path d="M4 5h16v11H9l-5 4z"/>',ruler:'<path d="M3 17L17 3l4 4L7 21zM7 13l2 2M10 10l2 2M13 7l2 2"/>',
+ wallet:'<path d="M4 7h15a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h12M16 14h.01"/>',megaphone:'<path d="M3 10v4h3l7 5V5L6 10zM17 9a4 4 0 0 1 0 6"/>',
+ tag:'<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.5"/>',dash:'<rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="5" rx="1.5"/><rect x="13" y="10" width="8" height="11" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/>',
+ images:'<rect x="7" y="3" width="14" height="14" rx="2"/><path d="M3 7v12a2 2 0 0 0 2 2h12M21 13l-4-4-7 7"/>',palette:'<path d="M12 3a9 9 0 0 0 0 18c1.5 0 2-1 2-2s-1-1.5-1-2.5 1-1.5 2-1.5h2a4 4 0 0 0 4-4c0-4.4-4-8-9-8z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7" r="1"/>',
+ printer:'<path d="M7 9V3h10v6M7 17H4v-7h16v7h-3M7 14h10v7H7z"/>',receipt:'<path d="M6 3h12v18l-3-2-3 2-3-2-3 2zM9 8h6M9 12h6"/>',
+ shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',server:'<rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M7 7.5h.01M7 16.5h.01"/>',
+ link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',help:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 0 1 4.9.7c0 1.7-2.4 2-2.4 3.6M12 17h.01"/>',
+ eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>'
+};
+const ic=(n,c='')=>`<svg class="i ${c}" viewBox="0 0 24 24" aria-hidden="true">${IC[n]||''}</svg>`;
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmtSize=b=>b>1048576?(b/1048576).toFixed(1).replace('.',',')+' MB':Math.max(1,Math.round(b/1024))+' kB';
+const plural=(n,a,b,c)=>n===1?a:n>1&&n<5?b:c;
+function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('show'),2600)}
+
+/* ================= otázky =================
+   typy: fields (textová pole s ikonou), multi (ikonové karty, víc možností), one (ikonové karty, jedna možnost),
+   chips, files, logo, access (doména + rozbalovací údaje) */
+const STEPS=[
+ {id:'uvod',t:'Úvod',i:'spark'},
+ {id:'firma',t:'Firma',i:'building',q:[
+   {k:'firma',type:'fields',label:'Údaje na web',i:'building',f:[
+     ['nazev','Název firmy','building','',1],['ico','IČO','hash','numeric'],['tel','Telefon na web','phone','tel'],['email','E-mail na web','mail','email'],['osoba','Jméno na webu','user'],
+     ['sidlo','Sídlo firmy','pin','',1],['oblast','Kde zakázky děláš','pin','',1]]}
+ ]},
+ {id:'sluzby',t:'Služby',i:'flame',q:[
+   {k:'sluzby',type:'multi',label:'Co děláš',i:'wrench',opts:[['tc','Tepelná čerpadla','fan'],['kotle','Plynové kotle','flame'],['podlahovka','Podlahové topení','floor'],['voda','Voda a odpady','drop'],['novostavby','Novostavby na klíč','home'],['rekonstrukce','Rekonstrukce','hammer'],['bazeny','Bazény','pool'],['servis','Servis a opravy','wrench']],other:'sluzbyJine',otherPh:'Něco dalšího?'}
+ ]},
+ {id:'zakaznici',t:'Zákazníci',i:'users',q:[
+   {k:'zakaznici',type:'multi',label:'Pro koho děláš',i:'users',opts:[['domy','Rodinné domy','home'],['investori','Developeři a investoři','briefcase'],['firmy','Firmy','building'],['stavebni','Stavební firmy','crane']]},
+   {k:'pole',type:'chips',label:'Na co se má ptát formulář na webu',i:'search',opts:[['typ','Novostavba / rekonstrukce','home'],['lokalita','Lokalita','pin'],['plocha','Velikost domu','ruler'],['zdroj','Současné topení','flame'],['projekt','Nahrát projekt','file'],['fotky','Fotky stavu','camera'],['termin','Termín','cal'],['rozpocet','Rozpočet','wallet'],['odkud','Odkud o nás ví','megaphone']]},
+   {k:'reakce',type:'one',label:'Nabídku pošleš do',i:'clock',cols:3,opts:[['2dny','2 dnů','zap'],['tyden','Týdne','cal'],['jinak','Jinak','chat']]}
+ ]},
+ {id:'znacka',t:'Logo',i:'pen',q:[
+   {k:'logo',type:'logo',label:'Logo',i:'pen'},
+   {k:'logoFiles',type:'files',krok:'logo',label:'Další grafika',i:'upload',hint:'Originál loga, leták, polep auta, náčrt',opt:1}
+ ]},
+ {id:'fotky',t:'Fotky',i:'camera',q:[
+   {k:'fotky',type:'files',krok:'fotky',label:'Fotky z realizací',i:'images',hint:'Stačí 6–12 nejlepších, klidně i tvoje parta',accept:'image/*,video/*',compress:1}
+ ]},
+ {id:'online',t:'Online',i:'globe',q:[
+   {k:'dom',type:'fields',label:'Doména',i:'globe',f:[['domena','Doména','globe'],['registrator','Kde je koupená','server']]},
+   {k:'pristup',type:'access',label:'Přístup k doméně',i:'key'},
+   {k:'mail',type:'one',label:'Kde ti běží e-mail',i:'mail',cols:3,opts:[['active24','Active24','server'],['google','Gmail','mail'],['jinde','Jinde','globe']],nevim:1},
+   {k:'gbp',type:'one',label:'Google profil firmy (Mapy)',i:'pin',cols:3,opts:[['zalozit','Nemám, založ ho','plus'],['vylepsit','Mám, pomoz s ním','spark'],['nechat','Mám, je to OK','check']]},
+   {k:'site',type:'fields',label:'Odkazy, pokud máš',i:'link',opt:1,f:[['fb','Facebook','link','url'],['ig','Instagram','link','url'],['gmaps','Google Mapy','pin','url',1]]}
+ ]},
+ {id:'dal',t:'Co dál',i:'layers',q:[
+   {k:'chce',type:'phase',label:'Co chceš teď a co později',i:'layers',opts:[['web','Web','globe','Firma, služby, kontakt',1],['form','Chytrý formulář','layers','Zákazník naklikne zakázku a nahraje projekt'],['admin','Administrace','dash','Poptávky a zakázky na jednom místě'],['realizace','Fotky k zakázkám','images','Sám si nahraješ fotky z hotové realizace'],['maily','Zprávy zákazníkům','mail','Automatický e-mail, že poptávka dorazila'],['identita','Google a Facebook','palette','Stejné logo a vzhled všude'],['tisk','Vizitky a letáky','printer','Tisk ve stejném stylu'],['faktury','Faktury přes AI','receipt','Napíšeš co a za kolik, faktura odejde']]},
+   {k:'termin',type:'one',label:'Kdy chceš web venku',i:'cal',cols:3,opts:[['hned','Co nejdřív','rocket'],['mesic','Do měsíce','cal'],['nespecha','Nespěchá','coffee']]}
+ ]},
+ {id:'odeslat',t:'Odeslat',i:'send'}
+];
+const FORM_STEPS=STEPS.filter(s=>s.q);
+const SI=Object.fromEntries(STEPS.map((s,i)=>[s.id,i]));
+
+/* ================= stav ================= */
+const LKEY='jantrex-podklady-v3';
+const D0=()=>({a:{nazev:'JANTREX realizace s.r.o.',email:'info@jantrex.cz',domena:'jantrex.cz',registrator:'Active24',chce:{web:'ted'}},notes:{},files:[],seen:[0],sentAt:null,updatedAt:null});
+let S=D0(),step=0;
+try{const r=localStorage.getItem(LKEY);if(r){const d=JSON.parse(r);S=Object.assign(D0(),d.S||{});S.a=Object.assign(D0().a,S.a);step=d.step||0}}catch(e){}
+let A=S.a;
+let saveT=null,touched=false;
+function persistLocal(){try{localStorage.setItem(LKEY,JSON.stringify({S,step}))}catch(e){}}
+function save(){touched=true;S.updatedAt=new Date().toISOString();persistLocal();clearTimeout(saveT);saveUI('busy','Ukládám…');saveT=setTimeout(()=>push(false),700);refreshMarks()}
+function setA(k,v){A[k]=v;save()}
+async function push(justSent){
+  try{const r=await fetch('/api/podklady',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(Object.assign({},S,{justSent}))});
+    if(!r.ok)throw 0;saveUI('ok','Uloženo');return true}catch(e){saveUI('bad','Neuloženo');return false}}
+function saveUI(cls,t){document.querySelectorAll('.savest').forEach(el=>{el.className='savest '+cls;el.innerHTML=t?`<span class="dot"></span>${t}`:''})}
+async function syncRemote(){try{const r=await fetch('/api/podklady',{cache:'no-store'});if(!r.ok)return;const d=await r.json();
+  if(touched||!d||!d.updatedAt||(S.updatedAt&&d.updatedAt<=S.updatedAt))return;
+  S=Object.assign(D0(),d);S.a=Object.assign(D0().a,d.a||{});A=S.a;persistLocal();render()}catch(e){}}
+
+/* ================= vyplněnost ================= */
+function filled(q){
+  if(q.type==='fields')return q.f.filter(f=>!f[4]||true).some(f=>(A[f[0]]||'').trim());
+  if(q.type==='files')return S.files.some(f=>f.krok===q.krok&&f.id);
+  if(q.type==='phase')return Object.keys(A[q.k]||{}).length>1;
+  if(q.type==='multi'||q.type==='chips'){const v=A[q.k]||[];return v.length>0||!!(q.other&&A[q.other])}
+  if(q.type==='access')return !!A.pristup;
+  return !!A[q.k];
+}
+function stepDone(id){const s=STEPS[SI[id]];if(!s||!s.q)return false;return s.q.filter(q=>!q.opt).every(filled)}
+function refreshMarks(){
+  document.querySelectorAll('[data-q]').forEach(el=>{const q=findQ(el.dataset.q);if(q)el.classList.toggle('filled',!!filled(q))});
+}
+function findQ(k){for(const s of FORM_STEPS)for(const q of s.q)if(q.k===k)return q}
+
+/* ================= vykreslení ================= */
+const okb=`<span class="okb">${ic('check')}</span>`;
+const qhead=q=>`<div class="qh"><span class="qi">${ic(q.i||'spark')}</span><span class="ql">${q.label}</span>${q.opt?'<span class="opt">Nepovinné</span>':''}${okb}</div>`;
+function inp(k,ph,icon,mode,full,type){const v=A[k]||'';
+  return `<label class="inp ${v.trim()?'has':''} ${full?'full':''}">${ic(icon)}<input class="tin" data-k="${k}" type="${type||'text'}" value="${esc(v)}" placeholder="${esc(ph)}" ${mode&&mode!=='url'?`inputmode="${mode}"`:''} ${mode==='url'?'inputmode="url"':''} autocomplete="off" aria-label="${esc(ph)}"><span class="ck2">${ic('check')}</span></label>`}
+function tileBtn(q,[val,t,icon,locked],on,multi){
+  return `<button class="tl ${on?'on':''}" data-${multi?'multi':'one'}="${q.k}" data-v="${val}" aria-pressed="${on}" ${locked?'data-locked="1"':''}><span class="ti">${ic(icon)}</span><b>${t}</b>${multi?`<span class="tk">${ic('check')}</span>`:''}</button>`}
+function qHTML(q){
+  const cls=`card q ${filled(q)?'filled':''}`;
+  if(q.type==='fields')return `<div class="${cls}" data-q="${q.k}">${qhead(q)}<div class="fields">${q.f.map(([k,ph,icon,mode,full])=>inp(k,ph,icon,mode,full)).join('')}</div></div>`;
+  if(q.type==='multi'){const v=A[q.k]||[];return `<div class="${cls}" data-q="${q.k}">${qhead(q)}${q.sub?`<p class="cap" style="margin:-6px 0 12px">${q.sub}</p>`:''}<div class="tiles">${q.opts.map(o=>tileBtn(q,o,v.includes(o[0]),1)).join('')}</div>
+    ${q.other?`<div class="other">${inp(q.other,q.otherPh,'plus')}</div>`:''}</div>`}
+  if(q.type==='phase'){const v=A[q.k]||{};return `<div class="${cls}" data-q="${q.k}">${qhead(q)}<div class="tiles ph">${q.opts.map(([id,t,icon,d,locked])=>`<div class="tl ${v[id]?'on':''}" data-ph="${id}"><span class="ti">${ic(icon)}</span><b>${t}</b><small>${d}</small>
+    <div class="seg">${locked?'<span class="segfix">Teď, základ</span>':[['ted','Teď'],['pozdeji','Později']].map(([val,l])=>`<button class="${v[id]===val?'on':''}" data-phase="${q.k}" data-id="${id}" data-v="${val}" aria-pressed="${v[id]===val}">${l}</button>`).join('')}</div></div>`).join('')}</div></div>`}
+  if(q.type==='one')return `<div class="${cls}" data-q="${q.k}">${qhead(q)}<div class="tiles ${q.cols===3?'c3':''}">${q.opts.map(o=>tileBtn(q,o,A[q.k]===o[0],0)).join('')}</div>
+    ${q.nevim?`<button class="chip nv ${A[q.k]==='nevim'?'on':''}" data-one="${q.k}" data-v="nevim" aria-pressed="${A[q.k]==='nevim'}">${ic('help')}Nevím</button>`:''}</div>`;
+  if(q.type==='chips'){const v=A[q.k]||[];return `<div class="${cls}" data-q="${q.k}">${qhead(q)}<div class="chips">${q.opts.map(([val,t,icon])=>`<button class="chip ${v.includes(val)?'on':''}" data-multi="${q.k}" data-v="${val}" aria-pressed="${v.includes(val)}">${ic(v.includes(val)?'check':icon)}${t}</button>`).join('')}</div></div>`}
+  if(q.type==='files')return `<div class="${cls}" data-q="${q.k}">${qhead(q)}${dropHTML(q)}</div>`;
+  if(q.type==='logo'){const v=A.logo;return `<div class="${cls}" data-q="logo">${qhead(q)}<div class="logo-row"><img src="/logo-jantrex.jpg" alt="Logo JANTREX">
+    <div class="tiles c3" style="grid-template-columns:1fr 1fr">${[['ok','Použij tohle','check'],['jine','Pošlu jiné','upload']].map(o=>tileBtn(q,o,v===o[0],0)).join('')}</div></div></div>`}
+  if(q.type==='access'){const v=A.pristup;return `<div class="${cls}" data-q="pristup">${qhead(q)}<div class="tiles c3">${[['spravce','Přidám tě jako správce','shield'],['udaje','Dám ti přihlášení','key'],['zavolat','Zavoláme si','phone']].map(o=>tileBtn({k:'pristup'},o,v===o[0],0)).join('')}</div>
+    <div class="reveal ${v==='udaje'?'open':''}" id="accReveal"><div><div class="inner"><div class="fields">${inp('a24login','E-mail nebo jméno do Active24','user')}${inp('a24heslo','Heslo','lock','', 0,'password')}</div>
+    <p class="warn">${ic('shield')}<span>Uvidím to jen já. Po spuštění webu si heslo klidně změň.</span></p></div></div></div></div>`}
+  return '';
+}
+function dropHTML(q){const list=S.files.filter(f=>f.krok===q.krok);
+  return `<label class="drop" data-drop="${q.krok}"><input type="file" multiple ${q.accept?`accept="${q.accept}"`:''} data-up="${q.krok}" ${q.compress?'data-compress="1"':''}>
+    <span class="tile">${ic('upload')}</span><span><b>Nahrát soubory</b><span class="cap">${q.hint||''}</span></span></label>
+    <div class="files" data-list="${q.krok}">${list.map(fileHTML).join('')}</div>`}
+const thumbs={};
+const isImg=t=>/^image\/(jpeg|png|webp|gif|svg)/.test(t||'');
+function fileHTML(f){const th=thumbs[f.id]||thumbs[f.tmp];const icon=/^audio/.test(f.type)?'audio':/^image/.test(f.type)?'image':'file';
+  return `<div class="file ${f.err?'err':''} ${!f.id&&!f.err?'up':''}" data-fid="${f.id||f.tmp}" ${th?`style="background-image:url(${th})"`:''}>${th?'':`<span class="fi">${ic(icon)}</span>`}
+   ${f.id?`<span class="done">${ic('check')}</span>`:''}<span class="fn">${esc(f.err||f.name)}</span>${!f.id&&!f.err?'<span class="bar"><i></i></span>':''}
+   ${f.id||f.err?`<button class="x" data-del="${f.id||f.tmp}" aria-label="Odebrat">${ic('x')}</button>`:''}</div>`}
+
+function intro(){
+  return `<div class="hero"><p class="kicker">Podklady k webu</p><h1>Čau Honzo, pár <span>kliknutí</span></h1>
+   <p>Co víš, naklikej. Co nevíš, přeskoč nebo namluv.</p></div>
+   <div class="ways"><div class="way"><span class="ti">${ic('clock')}</span><div><b>10 minut</b><span>Hlavně klikání</span></div></div>
+    <div class="way"><span class="ti">${ic('mic')}</span><div><b>Radši namluvit?</b><span>Hlasovka je u každého kroku</span></div></div>
+    <div class="way"><span class="ti">${ic('refresh')}</span><div><b>Ukládá se samo</b><span>Dokončíš kdykoliv</span></div></div></div>
+   <div class="map">${FORM_STEPS.map(s=>`<button class="mp" data-go="${SI[s.id]}">${ic(s.i)}${s.t}</button>`).join('')}</div>`}
+
+function summary(){
+  const checks=[['firma','Údaje firmy',filled(findQ('firma'))],['sluzby','Služby',filled(findQ('sluzby'))],['zakaznici','Formulář na webu',filled(findQ('pole'))],
+   ['znacka','Logo',filled(findQ('logo'))],['fotky','Fotky',filled(findQ('fotky'))],['online','Přístup k doméně',filled(findQ('pristup'))],['dal','Co chceš mít',filled(findQ('chce'))],['dal','Termín',filled(findQ('termin'))]];
+  const n=S.files.filter(f=>f.id).length;
+  return `<div class="card q"><div class="qh"><span class="qi">${ic('check')}</span><span class="ql">Přehled</span><span class="cap">${checks.filter(c=>c[2]).length}/${checks.length} · ${n} ${plural(n,'soubor','soubory','souborů')}</span></div>
+    <div class="todo">${checks.map(([id,t,ok])=>`<button class="td ${ok?'ok':''}" data-go="${SI[id]}"><span class="ic">${ic(ok?'check':'plus')}</span>${t}<small>Doplnit</small></button>`).join('')}</div></div>
+   <div class="card" id="sendBox">${S.sentAt?sentHTML():`<p class="cap" style="margin-bottom:14px">Nemusí být všechno, zbytek doladíme po telefonu.</p><button class="btn btn-p" id="sendBtn">${ic('send')}Odeslat podklady</button>`}</div>`}
+const sentHTML=()=>`<div class="sent"><span class="tile">${ic('check')}</span><div style="flex:1"><b>Odesláno</b><p class="cap">Díky, ozvu se. Když něco změníš, odešli znovu.</p></div><button class="btn btn-g btn-sm" id="sendBtn">Znovu</button></div>`;
+
+function sideHTML(){const id=STEPS[step].id;const recs=S.files.filter(f=>f.krok===id+'-hlasovka');const n=S.notes[id]||'';
+  return `<div class="card voicecard"><button class="sideclose" data-closeside aria-label="Zavřít">${ic('x')}</button>
+   <div class="vhead"><span class="qi" style="color:var(--gold)">${ic('mic')}</span><b>Nechce se ti psát?</b></div><p class="cap">Namluv to. ${step?'Hlasovka se uloží k tomuhle kroku.':''}</p>
+   <button class="micbig ${recOn()?'rec':''}" data-rec="${id}"><span class="mc">${ic(recOn()?'stop':'mic')}</span><span>${recOn()?`<b id="vtime">0:00</b><span class="wave">${'<i></i>'.repeat(9)}</span>`:`<b>${recs.length?'Nahrát další':'Nahrát hlasovku'}</b><span>Klikni, mluv, klikni</span>`}</span></button>
+   <div class="vlist" id="vlist">${recs.map(vlHTML).join('')}</div>
+   <p class="notetog">${ic('note')}Poznámka</p>
+   <textarea class="tin" data-notek="${id}" placeholder="Cokoliv k tomuhle kroku">${esc(n)}</textarea></div>`}
+const vlHTML=f=>`<div class="vl ${f.err?'err':''}">${ic(f.err?'x':f.id?'audio':'clock')}<span>${esc(f.err||f.name.replace(/\.(m4a|webm)$/,''))}</span>${f.id||f.err?`<button class="x" data-del="${f.id||f.tmp}" aria-label="Smazat">${ic('x')}</button>`:''}</div>`;
+
+function render(){
+  if(location.pathname.replace(/\/+$/,'')==='/odpovedi')return renderAnswers();
+  if(!gateOk())return renderGate();
+  const s=STEPS[step];const last=step===STEPS.length-1;
+  const nRec=S.files.filter(f=>f.krok===s.id+'-hlasovka'&&f.id).length+(S.notes[s.id]?1:0);
+  $('#app').innerHTML=`<div class="top"><a class="mark" href="/" aria-label="JANTREX">JANTRE<b>X</b></a><span class="savest"></span></div>
+   <nav class="stepper" aria-label="Kroky"><div class="stp-in">${STEPS.map((x,i)=>{const d=i!==step&&(S.seen||[]).includes(i)&&(i<step||x.id!=='odeslat'||S.sentAt);
+     return `<button class="stp ${i===step?'active':''} ${d?'done':''}" data-go="${i}" ${i===step?'aria-current="step"':''} title="${x.t}" aria-label="${x.t}"><span class="sc">${ic(d?'check':x.i)}</span><span class="l">${x.t}</span></button>`}).join('')}</div>
+    <div class="stp-bar"><b style="width:${step/(STEPS.length-1)*100}%"></b></div></nav>
+   <div class="lay"><main class="step" id="main">
+    ${step===0?intro():`<div class="sthead"><span class="tile">${ic(s.i)}</span><div><p class="kicker">Krok ${step} z ${STEPS.length-1}</p><h2>${s.t}</h2></div></div>
+      ${s.q?s.q.map(qHTML).join(''):summary()}`}
+    <div class="stnav">${step?`<button class="btn btn-g" data-go="${step-1}">${ic('back')}Zpět</button>`:'<span></span>'}${last?'':`<button class="btn btn-p" data-go="${step+1}">${step?'Pokračovat':'Jdeme na to'}${ic('arrow')}</button>`}</div>
+   </main>
+   <aside class="side" id="side">${sideHTML()}</aside></div>
+   <div class="mbar">${step?`<button class="mback" data-go="${step-1}" aria-label="Zpět">${ic('back')}</button>`:''}
+    <button class="mbtn ${recOn()?'rec':''}" data-openside aria-label="Hlasovka nebo poznámka">${ic('mic')}${nRec?`<span class="badge">${nRec}</span>`:''}</button>
+    ${last?`<button class="btn btn-p" data-send>${ic('send')}${S.sentAt?'Odeslat znovu':'Odeslat'}</button>`:`<button class="btn btn-p" data-go="${step+1}">${step?'Pokračovat':'Jdeme na to'}${ic('arrow')}</button>`}</div>
+   <p class="foot">Web připravuje <a href="https://vojtechsvoboda.cz" target="_blank" rel="noopener">vojtechsvoboda.cz</a></p>`;
+  saveUI(S.updatedAt?'ok':'',S.updatedAt?'Uloženo':'');
+  const a=$('.stp.active');if(a){const n=a.parentElement;if(n.scrollWidth>n.clientWidth)n.scrollLeft=a.offsetLeft-n.offsetLeft-n.clientWidth/2+a.offsetWidth/2}
+  bind();
+}
+function go(i){if(recOn()){toast('Nejdřív zastav nahrávání');return}step=Math.max(0,Math.min(STEPS.length-1,i));S.seen=S.seen||[0];if(!S.seen.includes(step))S.seen.push(step);persistLocal();render();scrollTo({top:0,behavior:'smooth'})}
+function redrawSide(){const sd=$('#side');if(sd){const open=sd.classList.contains('open');sd.innerHTML=sideHTML();bindSide()}
+  const mb=$('.mbtn');if(mb){const id=STEPS[step].id;const n=S.files.filter(f=>f.krok===id+'-hlasovka'&&f.id).length+(S.notes[id]?1:0);mb.classList.toggle('rec',recOn());mb.innerHTML=ic('mic')+(n?`<span class="badge">${n}</span>`:'')}}
+
+/* ================= interakce ================= */
+function bind(){
+  const m=$('#main');if(!m)return;
+  m.querySelectorAll('[data-k]').forEach(el=>el.oninput=()=>{A[el.dataset.k]=el.value;el.closest('.inp')&&el.closest('.inp').classList.toggle('has',!!el.value.trim());save()});
+  m.querySelectorAll('[data-multi]').forEach(b=>b.onclick=()=>{if(b.dataset.locked){toast('Web je základ, ten bude určitě');return}
+    const k=b.dataset.multi,v=b.dataset.v;const arr=(A[k]||[]).slice();const i=arr.indexOf(v);i>=0?arr.splice(i,1):arr.push(v);const on=arr.includes(v);
+    b.classList.toggle('on',on);b.setAttribute('aria-pressed',on);
+    if(b.classList.contains('chip')){const q=findQ(k);const o=q.opts.find(o=>o[0]===v);b.innerHTML=ic(on?'check':o[2])+o[1]}
+    setA(k,arr)});
+  m.querySelectorAll('[data-phase]').forEach(b=>b.onclick=()=>{const k=b.dataset.phase,id=b.dataset.id;const cur=Object.assign({},A[k]||{});cur[id]=cur[id]===b.dataset.v?undefined:b.dataset.v;if(!cur[id])delete cur[id];
+    const tl=b.closest('.tl');tl.classList.toggle('on',!!cur[id]);tl.querySelectorAll('[data-phase]').forEach(x=>{const on=cur[id]===x.dataset.v;x.classList.toggle('on',on);x.setAttribute('aria-pressed',on)});setA(k,cur)});
+  m.querySelectorAll('[data-one]').forEach(b=>b.onclick=()=>{const k=b.dataset.one;const v=A[k]===b.dataset.v?'':b.dataset.v;
+    b.closest('.q').querySelectorAll('[data-one]').forEach(x=>{const on=x.dataset.v===v;x.classList.toggle('on',on);x.setAttribute('aria-pressed',on)});
+    if(k==='pristup'){const r=$('#accReveal');if(r){r.classList.toggle('open',v==='udaje');if(v==='udaje')setTimeout(()=>{const f=r.querySelector('input');f&&f.focus()},300)}}
+    if(k==='logo'&&v==='jine'){setA(k,v);const d=m.querySelector('[data-up="logo"]');if(d)setTimeout(()=>d.closest('.q').scrollIntoView({behavior:'smooth',block:'center'}),100);return}
+    setA(k,v)});
+  m.querySelectorAll('[data-up]').forEach(inpt=>inpt.onchange=()=>{uploadAll([...inpt.files],inpt.dataset.up,!!inpt.dataset.compress);inpt.value=''});
+  m.querySelectorAll('[data-drop]').forEach(d=>{d.ondragover=e=>{e.preventDefault();d.classList.add('over')};d.ondragleave=()=>d.classList.remove('over');
+    d.ondrop=e=>{e.preventDefault();d.classList.remove('over');uploadAll([...e.dataTransfer.files],d.dataset.drop,!!d.querySelector('input').dataset.compress)}});
+  const sb=$('#sendBtn');if(sb)sb.onclick=send;
+  document.querySelectorAll('[data-send]').forEach(b=>b.onclick=send);
+  const os=$('[data-openside]');if(os)os.onclick=()=>$('#side').classList.toggle('open');
+  bindSide();
+}
+function bindSide(){const sd=$('#side');if(!sd)return;
+  sd.querySelectorAll('[data-rec]').forEach(b=>b.onclick=()=>toggleRec(b.dataset.rec));
+  sd.querySelectorAll('[data-notek]').forEach(t=>t.oninput=()=>{S.notes[t.dataset.notek]=t.value;save()});
+  const cl=sd.querySelector('[data-closeside]');if(cl)cl.onclick=()=>sd.classList.remove('open');
+}
+document.addEventListener('click',e=>{if(location.pathname.startsWith('/odpovedi'))return;
+  const b=e.target.closest('[data-go]');if(b){e.preventDefault();go(+b.dataset.go);return}
+  const d=e.target.closest('[data-del]');if(d){e.preventDefault();delFile(d.dataset.del)}});
+
+async function send(){
+  if(uploading>0){toast('Počkej, ještě se nahrávají soubory');return}
+  if(recOn()){toast('Nejdřív zastav nahrávání');return}
+  document.querySelectorAll('#sendBtn,[data-send]').forEach(b=>b.disabled=true);
+  clearTimeout(saveT);S.sentAt=new Date().toISOString();S.updatedAt=S.sentAt;persistLocal();
+  const ok=await push(true);
+  if(!ok){S.sentAt=null;persistLocal();toast('Nepodařilo se odeslat, zkus to znovu');render();return}
+  toast('Odesláno, díky!');render();
+}
+
+/* ================= soubory ================= */
+let uploading=0;
+async function compressImg(file){
+  if(!/^image\/(jpeg|png|webp)$/.test(file.type)||file.size<2.5e6)return file;
+  try{const bmp=await createImageBitmap(file);const sc=Math.min(1,2560/Math.max(bmp.width,bmp.height));
+    const c=document.createElement('canvas');c.width=Math.round(bmp.width*sc);c.height=Math.round(bmp.height*sc);c.getContext('2d').drawImage(bmp,0,0,c.width,c.height);
+    const blob=await new Promise(r=>c.toBlob(r,'image/jpeg',.86));if(!blob||blob.size>=file.size)return file;
+    return new File([blob],file.name.replace(/\.(png|webp)$/i,'.jpg'),{type:'image/jpeg'})}catch(e){return file}}
+function uploadAll(files,krok,compress){files.forEach(f=>uploadOne(f,krok,compress))}
+async function uploadOne(file,krok,compress){
+  const tmp='t'+Math.random().toString(36).slice(2);
+  const rec={tmp,name:file.name||'soubor',size:file.size,type:file.type,krok};
+  if(isImg(file.type))thumbs[tmp]=URL.createObjectURL(file);
+  S.files.push(rec);
+  if(file.size>24*1024*1024){rec.err='Nad 24 MB, pošli přes WeTransfer';redraw(krok);return}
+  redraw(krok);uploading++;
+  if(compress)file=await compressImg(file);rec.size=file.size;
+  const xhr=new XMLHttpRequest();
+  xhr.open('POST',`/api/soubor?name=${encodeURIComponent(rec.name)}&krok=${encodeURIComponent(krok)}`);
+  xhr.setRequestHeader('content-type',file.type||'application/octet-stream');
+  xhr.upload.onprogress=e=>{const bar=document.querySelector(`[data-fid="${tmp}"] .bar i`);if(bar&&e.lengthComputable)bar.style.width=(e.loaded/e.total*100)+'%'};
+  xhr.onload=()=>{uploading--;let d={};try{d=JSON.parse(xhr.responseText)}catch(e){}
+    if(xhr.status===200&&d.id){rec.id=d.id;rec.size=d.size;delete rec.tmp;if(thumbs[tmp])thumbs[d.id]=thumbs[tmp];save()}
+    else rec.err=d.error||'Nepovedlo se, zkus znovu';redraw(krok)};
+  xhr.onerror=()=>{uploading--;rec.err='Nepovedlo se, zkontroluj internet';redraw(krok)};
+  xhr.send(file);
+}
+function redraw(krok){
+  if(/-hlasovka$/.test(krok)){redrawSide();return}
+  const el=document.querySelector(`[data-list="${krok}"]`);if(el)el.innerHTML=S.files.filter(f=>f.krok===krok).map(fileHTML).join('');refreshMarks()}
+async function delFile(fid){const f=S.files.find(x=>x.id===fid||x.tmp===fid);if(!f)return;
+  S.files=S.files.filter(x=>x!==f);save();redraw(f.krok);
+  if(f.id)try{await fetch('/api/soubor?id='+encodeURIComponent(f.id),{method:'DELETE'})}catch(e){}}
+
+/* ================= hlasovky ================= */
+let mr=null,chunks=[],recStart=0,recTimer=null,recFor=null;
+const recOn=()=>!!(mr&&mr.state==='recording');
+async function toggleRec(id){
+  if(recOn()){mr.stop();return}
+  if(!navigator.mediaDevices||!window.MediaRecorder){toast('Tady nahrávání nejde. Pošli hlasovku jako soubor.');return}
+  let stream;try{stream=await navigator.mediaDevices.getUserMedia({audio:true})}catch(e){toast('Povol mikrofon v prohlížeči');return}
+  const type=['audio/mp4','audio/webm;codecs=opus','audio/webm'].find(t=>MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(t))||'';
+  mr=new MediaRecorder(stream,type?{mimeType:type}:undefined);chunks=[];recFor=id;
+  mr.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};
+  mr.onstop=()=>{stream.getTracks().forEach(t=>t.stop());clearInterval(recTimer);
+    const mime=(mr.mimeType||type||'audio/webm').split(';')[0];const ext=mime.includes('mp4')?'m4a':'webm';
+    const blob=new Blob(chunks,{type:mime});const secs=Math.round((Date.now()-recStart)/1000);mr=null;
+    if(blob.size<1500){redrawSide();toast('Moc krátké');return}
+    const name=`${STEPS[SI[recFor]].t} · ${Math.floor(secs/60)}:${String(secs%60).padStart(2,'0')} · ${new Date().toLocaleTimeString('cs-CZ',{hour:'2-digit',minute:'2-digit'})}.${ext}`;
+    uploadOne(new File([blob],name,{type:mime}),recFor+'-hlasovka',false);toast('Hlasovka uložena')};
+  mr.start(1000);recStart=Date.now();redrawSide();
+  recTimer=setInterval(()=>{const s=Math.round((Date.now()-recStart)/1000);const vt=$('#vtime');if(vt)vt.textContent=`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;if(s>=600&&recOn())mr.stop()},500);
+}
+
+/* ================= /odpovedi ================= */
+const PKEY='jantrex-odpovedi-heslo';
+let ANS=null;
+function optLabel(q,v){const o=(q.opts||[]).find(o=>o[0]===v);return o?o[1]:v==='nevim'?'Nevím':v}
+function fmtVal(q,a){const v=a[q.k];
+  if(q.type==='multi'||q.type==='chips'){const arr=(v||[]).map(x=>optLabel(q,x));if(q.other&&a[q.other])arr.push(a[q.other]);return arr.join(', ')}
+  if(q.type==='phase'){const c=v||{};const L={ted:'Teď',pozdeji:'Později'};return ['ted','pozdeji'].map(ph=>{const it=q.opts.filter(o=>c[o[0]]===ph).map(o=>o[1]);return it.length?`${L[ph]}: ${it.join(', ')}`:''}).filter(Boolean).join('\n')}
+  if(q.type==='one')return v?optLabel(q,v):'';
+  if(q.type==='logo')return ({ok:'Použij tohle logo',jine:'Pošle jiné'})[v]||'';
+  if(q.type==='access')return ({spravce:'Přidá tě jako správce',udaje:'Dal přihlašovací údaje',zavolat:'Zavoláte si'})[v]||'';
+  return v||''}
+function rowsFor(q,a,files,fileUrl,gal){
+  if(q.type==='fields')return q.f.map(([k,ph])=>kv(ph,a[k])).join('');
+  if(q.type==='files'){const l=files.filter(f=>f.krok===q.krok);return kv(q.label,l.length?l.length+' '+plural(l.length,'soubor','soubory','souborů'):'')+gal(l)}
+  let out=kv(q.label,fmtVal(q,a));
+  if(q.type==='access'&&a.pristup==='udaje')out+=kv('Login Active24',a.a24login)+`<div class="kv"><dt>Heslo</dt><dd>${a.a24heslo?`<span class="secret" data-pw="${esc(a.a24heslo)}">••••••••</span><button class="showpw" data-showpw>Zobrazit</button>`:'<span class="empty">Nevyplněno</span>'}</dd></div>`;
+  return out}
+const kv=(l,v)=>`<div class="kv"><dt>${esc(l)}</dt><dd class="${v?'':'empty'}">${v?esc(v):'Nevyplněno'}</dd></div>`;
+function renderAnswers(){
+  const pw=localStorage.getItem(PKEY)||'';
+  if(!ANS){
+    $('#app').innerHTML=`<div class="top"><a class="mark" href="/">JANTRE<b>X</b></a><span class="pill">${ic('lock')}Odpovědi</span></div>
+     <div class="card" style="max-width:420px;margin:40px auto 0"><span class="tile" style="margin-bottom:12px">${ic('lock')}</span><h2 style="margin-bottom:6px">Odpovědi</h2><p class="cap" style="margin-bottom:14px">Zadej heslo.</p>
+      <form id="pwf"><input class="tin" type="password" id="pw" placeholder="Heslo" value="${esc(pw)}" autocomplete="current-password"><button class="btn btn-p" style="margin-top:12px;width:100%">Zobrazit</button><p class="cap" id="pwerr" style="color:var(--err);margin-top:8px"></p></form></div>`;
+    $('#pwf').onsubmit=e=>{e.preventDefault();loadAnswers($('#pw').value)};if(pw)loadAnswers(pw);return}
+  const {current:c,sent,files}=ANS;const a=c.a||{};const notes=c.notes||{};const K=encodeURIComponent(localStorage.getItem(PKEY)||'');
+  const fileUrl=f=>`/soubor/${f.id}?k=${K}`;
+  const isPic=f=>/^image\/(jpeg|png|webp|gif)/.test(f.type);
+  const gal=list=>{if(!list.length)return '';const au=list.filter(f=>/^audio/.test(f.type)),ot=list.filter(f=>!/^audio/.test(f.type));
+    return (au.length?`<div class="aud">${au.map(f=>`<div><p class="cap">${esc(f.name)}</p><audio controls preload="none" src="${fileUrl(f)}"></audio></div>`).join('')}</div>`:'')+
+     (ot.length?`<div class="agal">${ot.map(f=>`<a class="ag" href="${fileUrl(f)}" target="_blank" rel="noopener"><span class="im" ${isPic(f)?`style="background-image:url('${fileUrl(f)}')"`:''}>${isPic(f)?'':ic('file')}</span><span>${esc(f.name)}</span><small>${fmtSize(f.size)}</small></a>`).join('')}</div>`:'')};
+  const known=new Set();
+  const sections=FORM_STEPS.map(s=>{s.q.forEach(q=>q.krok&&known.add(q.krok));known.add(s.id+'-hlasovka');const voice=files.filter(f=>f.krok===s.id+'-hlasovka');
+    return `<section class="card q"><h3><span class="tile">${ic(s.i)}</span>${s.t}</h3>${s.q.map(q=>rowsFor(q,a,files,fileUrl,gal)).join('')}
+      ${notes[s.id]?kv('Poznámka',notes[s.id]):''}${voice.length?kv('Hlasovky',String(voice.length))+gal(voice):''}</section>`}).join('');
+  const orphan=files.filter(f=>!known.has(f.krok));
+  $('#app').innerHTML=`<div class="ans"><div class="top"><a class="mark" href="/">JANTRE<b>X</b></a><div class="row"><button class="btn btn-g btn-sm" id="cp">${ic('copy')}Kopírovat jako text</button><button class="btn btn-g btn-sm" id="rl" aria-label="Načíst znovu">${ic('refresh')}</button></div></div>
+   <div class="sthead"><span class="tile">${ic('note')}</span><div><p class="kicker">Odpovědi</p><h2>Podklady od Honzy</h2>
+    <div class="row" style="margin-top:8px">${c.sentAt?`<span class="pill g">${ic('check')}Odesláno ${new Date(c.sentAt).toLocaleString('cs-CZ')}</span>`:c.updatedAt?`<span class="pill y">${ic('clock')}Rozpracováno</span>`:'<span class="pill">Zatím nic</span>'}
+    ${c.savedAt?`<span class="pill">Uloženo ${new Date(c.savedAt).toLocaleString('cs-CZ')}</span>`:''}<span class="pill">${files.length} ${plural(files.length,'soubor','soubory','souborů')}</span></div></div></div>
+   ${sections}
+   ${orphan.length?`<section class="card q"><h3><span class="tile">${ic('file')}</span>Ostatní soubory</h3>${gal(orphan)}</section>`:''}
+   <section class="card q"><h3><span class="tile">${ic('layers')}</span>Odeslané verze</h3>${sent.length?sent.map(v=>`<details class="ver"><summary>${new Date(v.at).toLocaleString('cs-CZ')}</summary><pre style="white-space:pre-wrap;font-size:12.5px;color:var(--muted);margin-top:8px">${esc(asText(v.data,null,true))}</pre></details>`).join(''):'<p class="cap">Zatím nic neodeslal.</p>'}</section></div>`;
+  $('#cp').onclick=async()=>{try{await navigator.clipboard.writeText(asText(c,files,true));toast('Zkopírováno (bez hesla)')}catch(e){toast('Kopírování se nepovedlo')}};
+  $('#rl').onclick=()=>loadAnswers(localStorage.getItem(PKEY)||'');
+  document.querySelectorAll('[data-showpw]').forEach(b=>b.onclick=()=>{const s=b.previousElementSibling;const shown=s.textContent!=='••••••••';s.textContent=shown?'••••••••':s.dataset.pw;b.textContent=shown?'Zobrazit':'Skrýt'});
+}
+function asText(c,files,hidePw){const a=c.a||{},n=c.notes||{};const fl=files||c.files||[];let t='JANTREX · podklady k webu\n';
+  if(c.sentAt)t+=`Odesláno: ${new Date(c.sentAt).toLocaleString('cs-CZ')}\n`;
+  FORM_STEPS.forEach(s=>{t+=`\n## ${s.t}\n`;s.q.forEach(q=>{
+    if(q.type==='fields'){q.f.forEach(([k,ph])=>t+=`- ${ph}: ${a[k]||'—'}\n`);return}
+    if(q.type==='files'){const l=fl.filter(f=>f.krok===q.krok&&f.id);t+=`- ${q.label}: ${l.length?l.map(f=>f.name).join(', '):'nic'}\n`;return}
+    t+=`- ${q.label}: ${fmtVal(q,a)||'—'}\n`;
+    if(q.type==='access'&&a.pristup==='udaje')t+=`- Login Active24: ${a.a24login||'—'}\n- Heslo: ${hidePw?(a.a24heslo?'(vyplněno, viz /odpovedi)':'—'):a.a24heslo||'—'}\n`});
+    if(n[s.id])t+=`- Poznámka: ${n[s.id]}\n`});return t}
+async function loadAnswers(pw){
+  try{const r=await fetch('/api/odpovedi',{headers:{'x-heslo':pw},cache:'no-store'});const d=await r.json().catch(()=>({}));
+    if(r.status===401){localStorage.removeItem(PKEY);ANS=null;renderAnswers();const e=$('#pwerr');if(e)e.textContent='Špatné heslo.';return}
+    if(!r.ok){const e=$('#pwerr');if(e)e.textContent=d.error||'Nepodařilo se načíst.';return}
+    localStorage.setItem(PKEY,pw);ANS=d;renderAnswers()}catch(e){const el=$('#pwerr');if(el)el.textContent='Nepodařilo se načíst.'}}
+
+/* ================= vstup s heslem (lehký zámek, heslo není v kódu, jen jeho otisk) ================= */
+const GATE='190ecfd3918e55b738f30a5bf56780d0dcb1f472fb953a7b340b4a1336d3ef10';
+const GKEY='jantrex-vstup';
+async function sha(t){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+function gateOk(){try{return localStorage.getItem(GKEY)===GATE}catch(e){return false}}
+function renderGate(){
+  $('#app').innerHTML=`<div style="min-height:80vh;display:grid;place-items:center"><div class="card" style="width:100%;max-width:400px;text-align:center;padding:28px 22px">
+    <span class="mark" style="font-size:24px;margin-bottom:24px">JANTRE<b>X</b></span>
+    <form id="gf"><label class="inp">${ic('lock')}<input class="tin" type="password" id="gp" placeholder="Heslo" autocomplete="current-password" aria-label="Heslo"><span class="ck2">${ic('check')}</span></label>
+    <button class="btn btn-p" style="margin-top:12px;width:100%">Vstoupit${ic('arrow')}</button><p class="cap" id="gerr" style="color:var(--err);margin-top:10px;min-height:20px"></p></form></div></div>`;
+  const f=$('#gp');setTimeout(()=>f.focus(),50);
+  $('#gf').onsubmit=async e=>{e.preventDefault();const h=await sha(f.value.trim().toLowerCase());
+    if(h===GATE){try{localStorage.setItem(GKEY,GATE)}catch(e){}render();syncRemote()}else{$('#gerr').textContent='Špatné heslo';f.select()}};
+}
+
+/* ================= start ================= */
+render();
+if(!location.pathname.startsWith('/odpovedi')&&gateOk()){syncRemote();document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&!recOn())syncRemote()})}
+</script>
+</body>
+</html>
